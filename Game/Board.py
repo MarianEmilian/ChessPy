@@ -2,22 +2,18 @@
 A board is a space with 64 spaces, conventionally alternating black and white. For visual purposes i replaced black with
 light blue.
 Each space can either contain a piece at a time, or be empty.
-
 """
+
 import pygame
 # used colors
-from Utils.Constants import BLACK, WHITE, BLUE
+from Utils.Constants import WHITE, BLUE
 # board dimensions
 from Utils.Constants import ROWS, COLS
 from Utils.Constants import SQUARE_SIZE, BOARD_BUFFER
-
 from Game.Piece import Piece
 
 
-
 def draw_board(window):
-    window.fill(BLACK)
-
     # drawing the chess board pattern
     for row in range(ROWS):
         start = row % 2
@@ -46,85 +42,50 @@ class Board:
     def __init__(self):
         self.board = [[0 for i in range(ROWS)] for j in range(COLS)]
 
-    def hardcode_pieces(self):
-        # white pieces
-        w_pawn = Piece("Pawn", "white")
-        w_rook = Piece("Rook", "white")
-        w_knight = Piece("Knight", "white")
-        w_queen = Piece("Queen", "white")
-        w_bishop = Piece("Bishop", "white")
-        w_king = Piece("King", "white")
+    def draw_pieces(self, window):
+        for row in range(ROWS):
+            for col in range(COLS):
+                if self.board[row][col] != 0:
+                    self.board[row][col].calc_coord()
+                    self.board[row][col].draw(window)
 
-        # black pieces
-        b_pawn = Piece("Pawn", "black")
-        b_rook = Piece("Rook", "black")
-        b_knight = Piece("Knight", "black")
-        b_queen = Piece("Queen", "black")
-        b_bishop = Piece("Bishop", "black")
-        b_king = Piece("King", "black")
+    def hardcode_pieces(self):
 
         # pawn placement. 8 pawns for each player
-        for col in COLS:
+        for col in range(COLS):
             # 2nd row in matrix = 7th row on actual board => black pawns
             row = 1
-            b_pawn.row = row
-            b_pawn.col = col
-            self.board[row][col] = b_pawn
-            # 6th row in matrix = 2nd row on actual board => white pawns
-            w_pawn.row = row
-            w_pawn.col = col
-            self.board[row + 5][col] = w_pawn
+            self.board[row][col] = Piece("Pawn", "black", row, col)
+            # 6th row = 1st row on board
+            row = row + 5
+            self.board[row][col] = Piece("Pawn", "white", row, col)
 
-        # rook placement. 2 for each player
-        # black rooks
-        self.board[0][0] = self.board[0][7] = b_rook
-        self.board[0][0].row = self.board[0][7].row = 0
-        self.board[0][0].col = 0
-        self.board[0][7].col = 7
+        # black pieces placement
+        # rook placement
+        self.board[0][0] = Piece("Rook", "black", 0, 0)
+        self.board[0][7] = Piece("Rook", "black", 0, 7)
+        # knight placement
+        self.board[0][1] = Piece("Knight", "black", 0, 1)
+        self.board[0][6] = Piece("Knight", "black", 0, 6)
+        # bishop placement
+        self.board[0][2] = Piece("Bishop", "black", 0, 2)
+        self.board[0][5] = Piece("Bishop", "black", 0, 5)
+        # queen placement
+        self.board[0][3] = Piece("Queen", "black", 0, 3)
+        # king placement
+        self.board[0][4] = Piece("King", "black", 0, 4)
 
-        # white rooks
-        self.board[7][0] = self.board[7][7] = w_rook
-        self.board[7][0].row = self.board[7][7].row = 7
-        self.board[7][0].col = 7
-        self.board[7][7].col = 7
-
-        # knight placement. 2 for each player
-        # black knights
-        self.board[0][1] = self.board[0][6] = b_knight
-        self.board[0][1].row = self.board[0][6].row = 0
-        self.board[0][1].col = 1
-        self.board[0][6].col = 6
-
-        # white knights
-        self.board[7][1] = self.board[7][6] = w_knight
-        self.board[7][0].row = self.board[7][7].row = 7
-        self.board[7][1].col = 1
-        self.board[7][6].col = 6
-
-        # bishop placement. 2 for each player
-        # black bishop
-        self.board[0][2] = self.board[0][5] = b_bishop
-        self.board[0][2].row = self.board[0][5].row = 0
-        self.board[0][2].col = 2
-        self.board[0][5].col = 5
-
-        # black bishop
-        self.board[7][2] = self.board[7][5] = w_bishop
-        self.board[7][2].row = self.board[7][5].row = 7
-        self.board[7][2].col = 2
-        self.board[7][5].col = 5
-
-        # queen and king placement. 1 for each player
-        # black queen and king
-        self.board[0][3] = b_king
-        self.board[0][4] = b_queen
-        self.board[0][3].row = self.board[0][4].row = 0
-        self.board[0][3].col = 3
-        self.board[0][4].col = 4
-
-        # white queen and king. Positions are mirrored
-        self.board[7][3] = w_queen
-        self.board[7][4] = w_king
-        self.board[7][3].row = self.board[7][4].row = 7
-        self.board[7][3].col = 3
-        self.board[7][4].col = 4
+        # white pieces placement
+        # rook placement
+        self.board[7][0] = Piece("Rook", "white", 7, 0)
+        self.board[7][7] = Piece("Rook", "white", 7, 7)
+        # knight placement
+        self.board[7][1] = Piece("Knight", "white", 7, 1)
+        self.board[7][6] = Piece("Knight", "white", 7, 6)
+        # bishop placement
+        self.board[7][2] = Piece("Bishop", "white", 7, 2)
+        self.board[7][5] = Piece("Bishop", "white", 7, 5)
+        # queen placement
+        self.board[7][4] = Piece("Queen", "white", 7, 3)
+        # king placement
+        self.board[7][3] = Piece("King", "white", 7, 4)
