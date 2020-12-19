@@ -17,6 +17,20 @@ def init_board(board):
     pygame.display.update()
 
 
+def get_rc_from_mouse(pos):
+    x, y = pos
+    # compensate for padding
+    x = x - BOARD_BUFFER
+    y = y - BOARD_BUFFER
+
+    row = y // SQUARE_SIZE
+    col = x // SQUARE_SIZE
+
+    if row in range(8) and col in range(8):
+        return row, col
+    return -1, -1
+
+
 def game():
     run = True
     clock = pygame.time.Clock()
@@ -29,7 +43,9 @@ def game():
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                pass
+                row, col = get_rc_from_mouse(pygame.mouse.get_pos())
+                piece = board.get_piece(row, col)
+
 
     pygame.quit()
 

@@ -25,20 +25,26 @@ class Piece:
         self.x = 0
         self.y = 0
 
+        self.calc_coord()
+
     def pawn_to_other(self, name: str):
         # Updates pawn
         self.name = name
         self.img_path = IMG_PATH + self.color[0] + name + ".png"
 
     def calc_coord(self):
-        self.x = SQUARE_SIZE * self.col + SQUARE_SIZE // 2 + BOARD_BUFFER // 2 + 10
-        self.y = SQUARE_SIZE * self.row + SQUARE_SIZE // 2 + BOARD_BUFFER // 2 + 10
+        self.x = SQUARE_SIZE * self.col + SQUARE_SIZE // 2 + BOARD_BUFFER // 2
+        self.y = SQUARE_SIZE * self.row + SQUARE_SIZE // 2 + BOARD_BUFFER // 2
 
     def draw(self, window):
         piece_img = load(self.img_path)
         # downsizing img. Rotate by 0 deg, multiply by 0,5
-        piece_img = scale(piece_img, (70, 70))
+        piece_img = scale(piece_img, (92, 92))
         window.blit(piece_img, (self.x, self.y))
 
-    def to_string(self):
-        return self.color + self.name
+    def update_piece(self, row, col):
+        # update row and col
+        self.row = row
+        self.col = col
+        # update coordinates
+        self.calc_coord()

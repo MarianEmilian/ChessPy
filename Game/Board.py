@@ -42,6 +42,9 @@ class Board:
     def __init__(self):
         self.board = [[0 for i in range(ROWS)] for j in range(COLS)]
 
+    def get_piece(self, row, col):
+        return self.board[row][col]
+
     def draw_pieces(self, window):
         for row in range(ROWS):
             for col in range(COLS):

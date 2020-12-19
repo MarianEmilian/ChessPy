@@ -7,6 +7,6 @@ ROWS = 8
 COLS = 8
 SQUARE_SIZE = 90
 BOARD_BUFFER = 90  # Some space to be left at the top and left side of the board
-WINDOW_HEIGHT = 800
+WINDOW_HEIGHT = 880
 WINDOW_WIDTH = 1280
 IMG_PATH = "../images/Chess Pieces/"
