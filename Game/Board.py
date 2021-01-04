@@ -1,5 +1,5 @@
 """
-A board is a space with 64 spaces, conventionally alternating black and white. For visual purposes i replaced black with
+A board is composed from 64 spaces, conventionally alternating black and white. For visual purposes i replaced black with
 light blue.
 Each space can either contain a piece at a time, or be empty.
 """
@@ -13,44 +13,189 @@ from Utils.Constants import SQUARE_SIZE, BOARD_BUFFER
 from Game.Piece import Piece
 
 
-def draw_board(window):
-    # drawing the chess board pattern
-    for row in range(ROWS):
-        start = row % 2
-        # white rectangles
-        for col in range(start, COLS, 2):
-            pygame.draw.rect(window, WHITE, (row * SQUARE_SIZE + BOARD_BUFFER,  # the place of the tile
-                                             col * SQUARE_SIZE + BOARD_BUFFER,
-                                             SQUARE_SIZE,  # the size of the tile
-                                             SQUARE_SIZE)
-                             )
-        # cyan rectangles
-        # an artifice to alternate the squares
-        if start == 0:
-            start = start + 1
-        else:
-            start = start - 1
-        for col in range(start, ROWS, 2):
-            pygame.draw.rect(window, BLUE, (row * SQUARE_SIZE + BOARD_BUFFER,  # the place of the tile
-                                            col * SQUARE_SIZE + BOARD_BUFFER,
-                                            SQUARE_SIZE,  # the size of the tile
-                                            SQUARE_SIZE)
-                             )
+def in_bounds(row, col):
+    if row in range(ROWS) and col in range(COLS):
+        return True
+    return False
 
 
 class Board:
     def __init__(self):
         self.board = [[0 for i in range(ROWS)] for j in range(COLS)]
+        self.hardcode_pieces()
 
     def get_piece(self, row, col):
         return self.board[row][col]
 
-    def draw_pieces(self, window):
+    def _draw_pieces(self, window):
         for row in range(ROWS):
             for col in range(COLS):
                 if self.board[row][col] != 0:
                     self.board[row][col].calc_coord()
                     self.board[row][col].draw(window)
+
+    def move(self, piece, row, col):
+        self.board[piece.row][piece.col], self.board[row][col] = self.board[row][col], self.board[piece.row][piece.col]
+        print(self.board[piece.row][piece.col], self.board[row][col])
+        piece.update_piece(row, col)
+
+    def draw(self, window):
+        # drawing the chess board pattern
+        for row in range(ROWS):
+            start = row % 2
+            # white rectangles
+            for col in range(start, COLS, 2):
+                pygame.draw.rect(window, WHITE, (row * SQUARE_SIZE + BOARD_BUFFER,  # the place of the tile
+                                                 col * SQUARE_SIZE + BOARD_BUFFER,
+                                                 SQUARE_SIZE,  # the size of the tile
+                                                 SQUARE_SIZE)
+                                 )
+            # cyan rectangles
+            # an artifice to alternate the squares
+            if start == 0:
+                start = start + 1
+            else:
+                start = start - 1
+            for col in range(start, ROWS, 2):
+                pygame.draw.rect(window, BLUE, (row * SQUARE_SIZE + BOARD_BUFFER,  # the place of the tile
+                                                col * SQUARE_SIZE + BOARD_BUFFER,
+                                                SQUARE_SIZE,  # the size of the tile
+                                                SQUARE_SIZE)
+                                 )
+        self._draw_pieces(window)
+
+    def _pawn_moves(self, piece):
+        moves = []
+        if piece.color == "black":
+            # moves downwards
+            # eat piece diagonally to the left or right
+            if in_bounds(piece.row + 1, piece.col + 1) and \
+                    self.board[piece.row + 1][piece.col + 1] != 0 or \
+                    self.board[piece.row + 1][piece.col + 1].color == "white":
+                moves.append((piece.row + 1, piece.col + 1))
+            if in_bounds(piece.row + 1, piece.col - 1) and \
+                    self.board[piece.row + 1][piece.col - 1] != 0 or \
+                    self.board[piece.row + 1][piece.col - 1].color == "white":
+                moves.append((piece.row + 1, piece.col - 1))
+            # move downwards if space is free
+            if self.board[piece.row + 1][piece.col] == 0:
+                moves.append((piece.row + 1, piece.col))
+        if piece.color == "white":
+            # moves upwards
+            # eat piece diagonally to the left or right
+            if in_bounds(piece.row - 1, piece.col + 1) and \
+                    self.board[piece.row - 1][piece.col + 1] != 0 or \
+                    self.board[piece.row - 1][piece.col + 1].color == "black":
+                moves.append((piece.row - 1, piece.col + 1))
+            if in_bounds(piece.row - 1, piece.col - 1) and \
+                    self.board[piece.row - 1][piece.col - 1] != 0 or \
+                    self.board[piece.row - 1][piece.col - 1].color == "black":
+                moves.append((piece.row - 1, piece.col - 1))
+            # move upwards if space is free
+            if self.board[piece.row - 1][piece.col] == 0:
+                moves.append((piece.row - 1, piece.col))
+        return moves
+
+    def _rook_moves(self, piece):
+        # horizontal/vertical in line. The space must be free/ occupied by
+        # opposite color
+        # black and white rooks move the same
+        moves = []
+        # simulating direction, left right for horizontal movement, up down for vertical
+        directions = [-1, 1]
+        i = 1
+        # moving horizontal
+        for direction in directions:
+            while in_bounds(piece.row, piece.col + i * direction) and \
+                    self.board[piece.row][piece.col + i * direction] == 0:
+                moves.append((piece.row, piece.col + i * direction))
+            if piece.color == "white" and self.board[piece.row][piece.col + i * direction].color == "black":
+                moves.append((piece.row, piece.col + i * direction))
+        i = 1
+        # moving vertically
+        for direction in directions:
+            while in_bounds(piece.row + i * direction, piece.col) and \
+                    self.board[piece.row + i * direction][piece.col] == 0:
+                moves.append((piece.row + i * direction, piece.col))
+            if piece.color == "black" and self.board[piece.row][piece.col + i * direction].color == "white":
+                moves.append((piece.row, piece.col + i * direction))
+        return moves
+
+    def _knight_moves(self, piece):
+        # moves in L shape
+        moves = []
+        # 2 up 1 right
+        if in_bounds(piece.row + 2, piece.col + 1) and \
+                self.board[piece.row + 2][piece.col + 1] == 0 or \
+                (piece.color == "white" and self.board[piece.row + 2][piece.col + 1] == "black") or \
+                (piece.color == "black" and self.board[piece.row + 2][piece.col + 1] == "white"):
+            moves.append(self.board[piece.row + 2][piece.col + 1])
+
+        # 2 up 1 left
+        if in_bounds(piece.row + 2, piece.col - 1) and \
+                self.board[piece.row + 2][piece.col - 1] == 0 or \
+                (piece.color == "white" and self.board[piece.row + 2][piece.col - 1] == "black") or \
+                (piece.color == "black" and self.board[piece.row + 2][piece.col - 1] == "white"):
+            moves.append(self.board[piece.row + 2][piece.col - 1])
+
+        # 2 down 1 left
+        if in_bounds(piece.row - 2, piece.col - 1) and \
+                self.board[piece.row - 2][piece.col - 1] == 0 or \
+                (piece.color == "white" and self.board[piece.row - 2][piece.col - 1] == "black") or \
+                (piece.color == "black" and self.board[piece.row - 2][piece.col - 1] == "white"):
+            moves.append(self.board[piece.row - 2][piece.col - 1])
+
+        # 2 down 1 right
+        if in_bounds(piece.row - 2, piece.col + 1) and \
+                self.board[piece.row - 2][piece.col + 1] == 0 or \
+                (piece.color == "white" and self.board[piece.row - 2][piece.col + 1] == "black") or \
+                (piece.color == "black" and self.board[piece.row - 2][piece.col + 1] == "white"):
+            moves.append(self.board[piece.row - 2][piece.col + 1])
+
+        # 1 up 2 left
+        if in_bounds(piece.row + 1, piece.col - 2) and \
+                self.board[piece.row + 1][piece.col - 2] == 0 or \
+                (piece.color == "white" and self.board[piece.row + 1][piece.col - 2] == "black") or \
+                (piece.color == "black" and self.board[piece.row + 1][piece.col - 2] == "white"):
+            moves.append(self.board[piece.row + 1][piece.col - 2])
+
+        # 1 up 2 right
+        if in_bounds(piece.row + 1, piece.col + 2) and \
+                self.board[piece.row + 1][piece.col + 2] == 0 or \
+                (piece.color == "white" and self.board[piece.row + 1][piece.col + 2] == "black") or \
+                (piece.color == "black" and self.board[piece.row + 1][piece.col + 2] == "white"):
+            moves.append(self.board[piece.row + 1][piece.col + 2])
+
+        # 1 down 2 left
+        if in_bounds(piece.row - 1, piece.col - 2) and \
+                self.board[piece.row - 1][piece.col - 2] == 0 or \
+                (piece.color == "white" and self.board[piece.row - 1][piece.col - 2] == "black") or \
+                (piece.color == "black" and self.board[piece.row - 1][piece.col - 2] == "white"):
+            moves.append(self.board[piece.row - 1][piece.col - 2])
+
+        # 1 down 2 right
+        if in_bounds(piece.row - 1, piece.col + 2) and \
+                self.board[piece.row - 1][piece.col + 2] == 0 or \
+                (piece.color == "white" and self.board[piece.row - 1][piece.col + 2] == "black") or \
+                (piece.color == "black" and self.board[piece.row - 1][piece.col + 2] == "white"):
+            moves.append(self.board[piece.row - 1][piece.col + 2])
+        return moves
+
+    def set_valid_moves(self, piece):
+        # pawn moves
+        if piece.name == "Pawn":
+            piece.valid_moves = self._pawn_moves(piece)
+        # knight moves
+        if piece.name == "Rook":
+            piece.valid_moves = self._rook_moves(piece)
+        if piece.name == "Knight":
+            piece.valid_moves = self._knight_moves(piece)
+        if piece.name == "Bishop":
+            piece.valid_moves = self._bishop_moves(piece)
+        if piece.name == "Queen":
+            piece.valid_moves = self._queen_moves(piece)
+        if piece.name == "King":
+            piece.valid_moves = self._king_moves(piece)
 
     def hardcode_pieces(self):
 
@@ -73,11 +218,10 @@ class Board:
         # bishop placement
         self.board[0][2] = Piece("Bishop", "black", 0, 2)
         self.board[0][5] = Piece("Bishop", "black", 0, 5)
-        # queen placement
+        # black queen placement
         self.board[0][3] = Piece("Queen", "black", 0, 3)
-        # king placement
+        # black king placement
         self.board[0][4] = Piece("King", "black", 0, 4)
-
         # white pieces placement
         # rook placement
         self.board[7][0] = Piece("Rook", "white", 7, 0)
@@ -88,7 +232,16 @@ class Board:
         # bishop placement
         self.board[7][2] = Piece("Bishop", "white", 7, 2)
         self.board[7][5] = Piece("Bishop", "white", 7, 5)
-        # queen placement
-        self.board[7][4] = Piece("Queen", "white", 7, 3)
-        # king placement
-        self.board[7][3] = Piece("King", "white", 7, 4)
+        # white queen placement
+        self.board[7][4] = Piece("Queen", "white", 7, 4)
+        # white king placement
+        self.board[7][3] = Piece("King", "white", 7, 3)
+
+    def print_board(self):
+        for i in range(ROWS):
+            for j in range(COLS):
+                if self.board[i][j] != 0:
+                    print(self.board[i][j].name + " ")
+                else:
+                    print("0 ")
+            print("\n")

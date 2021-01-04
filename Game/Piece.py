@@ -16,6 +16,7 @@ class Piece:
         self.color = color
         self.row = row
         self.col = col
+        self.valid_moves = {}
 
         # the name of the images is the first letter of the color + the piece name
         # Example: wPawn/bKing/bRook/wQueen
@@ -48,3 +49,4 @@ class Piece:
         self.col = col
         # update coordinates
         self.calc_coord()
+
