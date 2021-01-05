@@ -237,7 +237,7 @@ class Board:
 
         return moves
 
-    def set_valid_moves(self, piece):
+    def update_valid_moves(self, piece):
         # pawn moves
         if piece.name == "Pawn":
             piece.valid_moves = self._pawn_moves(piece)
