@@ -140,50 +140,50 @@ class Board:
         # Up/Down left/right as seen on the matrix
         # 2 up 1 right
         if in_bounds(piece.row + 2, piece.col + 1) \
-                and (self.board[piece.row + 2][piece.col + 1] == 0 \
-                or piece.color != self.board[piece.row + 1][piece.col + 1]):
+                and (self.board[piece.row + 2][piece.col + 1] == 0
+                     or piece.color != self.board[piece.row + 1][piece.col + 1]):
             moves.append(self.board[piece.row + 2][piece.col + 1])
 
         # 2 up 1 left
         if in_bounds(piece.row + 2, piece.col - 1) \
-                and (self.board[piece.row + 2][piece.col - 1] == 0 \
-                or piece.color != self.board[piece.row + 2][piece.col - 1]):
+                and (self.board[piece.row + 2][piece.col - 1] == 0
+                     or piece.color != self.board[piece.row + 2][piece.col - 1]):
             moves.append(self.board[piece.row + 2][piece.col - 1])
 
         # 2 down 1 left
         if in_bounds(piece.row - 2, piece.col - 1) \
-                and (self.board[piece.row - 2][piece.col - 1] == 0 \
-                or piece.color != self.board[piece.row - 2][piece.col - 1]):
+                and (self.board[piece.row - 2][piece.col - 1] == 0
+                     or piece.color != self.board[piece.row - 2][piece.col - 1]):
             moves.append(self.board[piece.row - 2][piece.col - 1])
 
         # 2 down 1 right
         if in_bounds(piece.row - 2, piece.col + 1) \
-                and (self.board[piece.row - 2][piece.col + 1] == 0 \
-                or piece.color != self.board[piece.row - 2][piece.col + 1]):
+                and (self.board[piece.row - 2][piece.col + 1] == 0
+                     or piece.color != self.board[piece.row - 2][piece.col + 1]):
             moves.append(self.board[piece.row - 2][piece.col + 1])
 
         # 1 up 2 left
         if in_bounds(piece.row + 1, piece.col - 2) \
-                and (self.board[piece.row + 1][piece.col - 2] == 0 \
-                or piece.color != self.board[piece.row + 1][piece.col - 2]):
+                and (self.board[piece.row + 1][piece.col - 2] == 0
+                     or piece.color != self.board[piece.row + 1][piece.col - 2]):
             moves.append(self.board[piece.row + 1][piece.col - 2])
 
         # 1 up 2 right
         if in_bounds(piece.row + 1, piece.col + 2) \
-                and (self.board[piece.row + 1][piece.col + 2] == 0 \
-                or piece.color != self.board[piece.row + 1][piece.col + 2]):
+                and (self.board[piece.row + 1][piece.col + 2] == 0
+                     or piece.color != self.board[piece.row + 1][piece.col + 2]):
             moves.append(self.board[piece.row + 1][piece.col + 2])
 
         # 1 down 2 left
         if in_bounds(piece.row - 1, piece.col - 2) \
-                and (self.board[piece.row - 1][piece.col - 2] == 0 \
-                or piece.color != self.board[piece.row - 1][piece.col - 2]):
+                and (self.board[piece.row - 1][piece.col - 2] == 0
+                     or piece.color != self.board[piece.row - 1][piece.col - 2]):
             moves.append(self.board[piece.row - 1][piece.col - 2])
 
         # 1 down 2 right
         if in_bounds(piece.row - 1, piece.col + 2) \
-                and (self.board[piece.row - 1][piece.col + 2] == 0 \
-                or piece.color != self.board[piece.row - 1][piece.col + 2]):
+                and (self.board[piece.row - 1][piece.col + 2] == 0
+                     or piece.color != self.board[piece.row - 1][piece.col + 2]):
             moves.append(self.board[piece.row - 1][piece.col + 2])
         return moves
 
