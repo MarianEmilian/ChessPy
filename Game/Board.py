@@ -18,6 +18,17 @@ def in_bounds(row, col):
         return True
     return False
 
+def KTK_check(board, row, col):
+    # verifies if a king puts in check another one
+
+    # get the other king row col
+    for row2 in range(ROWS):
+        for col2 in range(COLS):
+            if board[row][col].color != board[row2][col2].color and board[row2][col2].name == "king":
+                    break
+    if abs(row2-row) <= 1 and abs(col2, col) <= 1:
+        return True
+    return False
 
 class Board:
     def __init__(self):
@@ -69,13 +80,13 @@ class Board:
         if piece.color == "black":
             # moves downwards
             # eat piece diagonally to the left or right
-            if in_bounds(piece.row + 1, piece.col + 1) and \
-                    self.board[piece.row + 1][piece.col + 1] != 0 or \
-                    self.board[piece.row + 1][piece.col + 1].color == "white":
+            if in_bounds(piece.row + 1, piece.col + 1) \
+                    and self.board[piece.row + 1][piece.col + 1] != 0 \
+                    or self.board[piece.row + 1][piece.col + 1].color == "white":
                 moves.append((piece.row + 1, piece.col + 1))
-            if in_bounds(piece.row + 1, piece.col - 1) and \
-                    self.board[piece.row + 1][piece.col - 1] != 0 or \
-                    self.board[piece.row + 1][piece.col - 1].color == "white":
+            if in_bounds(piece.row + 1, piece.col - 1) \
+                    and self.board[piece.row + 1][piece.col - 1] != 0 \
+                    or self.board[piece.row + 1][piece.col - 1].color == "white":
                 moves.append((piece.row + 1, piece.col - 1))
             # move downwards if space is free
             if self.board[piece.row + 1][piece.col] == 0:
@@ -83,9 +94,9 @@ class Board:
         if piece.color == "white":
             # moves upwards
             # eat piece diagonally to the left or right
-            if in_bounds(piece.row - 1, piece.col + 1) and \
-                    self.board[piece.row - 1][piece.col + 1] != 0 or \
-                    self.board[piece.row - 1][piece.col + 1].color == "black":
+            if in_bounds(piece.row - 1, piece.col + 1) \
+                    and self.board[piece.row - 1][piece.col + 1] != 0 \
+                    or self.board[piece.row - 1][piece.col + 1].color == "black":
                 moves.append((piece.row - 1, piece.col + 1))
             if in_bounds(piece.row - 1, piece.col - 1) and \
                     self.board[piece.row - 1][piece.col - 1] != 0 or \
@@ -106,79 +117,124 @@ class Board:
         i = 1
         # moving horizontal
         for direction in directions:
-            while in_bounds(piece.row, piece.col + i * direction) and \
-                    self.board[piece.row][piece.col + i * direction] == 0:
+            while in_bounds(piece.row, piece.col + i * direction) \
+                    and self.board[piece.row][piece.col + i * direction] == 0:
                 moves.append((piece.row, piece.col + i * direction))
-            if piece.color == "white" and self.board[piece.row][piece.col + i * direction].color == "black":
-                moves.append((piece.row, piece.col + i * direction))
+                if piece.color != self.board[piece.row][piece.col + i * direction].color:
+                    moves.append((piece.row, piece.col + i * direction))
+                i = i + 1
         i = 1
         # moving vertically
         for direction in directions:
-            while in_bounds(piece.row + i * direction, piece.col) and \
-                    self.board[piece.row + i * direction][piece.col] == 0:
+            while in_bounds(piece.row + i * direction, piece.col) \
+                    and self.board[piece.row + i * direction][piece.col] == 0:
                 moves.append((piece.row + i * direction, piece.col))
-            if piece.color == "black" and self.board[piece.row][piece.col + i * direction].color == "white":
-                moves.append((piece.row, piece.col + i * direction))
+                if piece.color != self.board[piece.row + i * direction][piece.col].color:
+                    moves.append((piece.row + i * direction, piece.col))
+                i = i + 1
         return moves
 
     def _knight_moves(self, piece):
         # moves in L shape
         moves = []
+        # Up/Down left/right as seen on the matrix
         # 2 up 1 right
-        if in_bounds(piece.row + 2, piece.col + 1) and \
-                self.board[piece.row + 2][piece.col + 1] == 0 or \
-                (piece.color == "white" and self.board[piece.row + 2][piece.col + 1] == "black") or \
-                (piece.color == "black" and self.board[piece.row + 2][piece.col + 1] == "white"):
+        if in_bounds(piece.row + 2, piece.col + 1) \
+                and (self.board[piece.row + 2][piece.col + 1] == 0 \
+                or piece.color != self.board[piece.row + 1][piece.col + 1]):
             moves.append(self.board[piece.row + 2][piece.col + 1])
 
         # 2 up 1 left
-        if in_bounds(piece.row + 2, piece.col - 1) and \
-                self.board[piece.row + 2][piece.col - 1] == 0 or \
-                (piece.color == "white" and self.board[piece.row + 2][piece.col - 1] == "black") or \
-                (piece.color == "black" and self.board[piece.row + 2][piece.col - 1] == "white"):
+        if in_bounds(piece.row + 2, piece.col - 1) \
+                and (self.board[piece.row + 2][piece.col - 1] == 0 \
+                or piece.color != self.board[piece.row + 2][piece.col - 1]):
             moves.append(self.board[piece.row + 2][piece.col - 1])
 
         # 2 down 1 left
-        if in_bounds(piece.row - 2, piece.col - 1) and \
-                self.board[piece.row - 2][piece.col - 1] == 0 or \
-                (piece.color == "white" and self.board[piece.row - 2][piece.col - 1] == "black") or \
-                (piece.color == "black" and self.board[piece.row - 2][piece.col - 1] == "white"):
+        if in_bounds(piece.row - 2, piece.col - 1) \
+                and (self.board[piece.row - 2][piece.col - 1] == 0 \
+                or piece.color != self.board[piece.row - 2][piece.col - 1]):
             moves.append(self.board[piece.row - 2][piece.col - 1])
 
         # 2 down 1 right
-        if in_bounds(piece.row - 2, piece.col + 1) and \
-                self.board[piece.row - 2][piece.col + 1] == 0 or \
-                (piece.color == "white" and self.board[piece.row - 2][piece.col + 1] == "black") or \
-                (piece.color == "black" and self.board[piece.row - 2][piece.col + 1] == "white"):
+        if in_bounds(piece.row - 2, piece.col + 1) \
+                and (self.board[piece.row - 2][piece.col + 1] == 0 \
+                or piece.color != self.board[piece.row - 2][piece.col + 1]):
             moves.append(self.board[piece.row - 2][piece.col + 1])
 
         # 1 up 2 left
-        if in_bounds(piece.row + 1, piece.col - 2) and \
-                self.board[piece.row + 1][piece.col - 2] == 0 or \
-                (piece.color == "white" and self.board[piece.row + 1][piece.col - 2] == "black") or \
-                (piece.color == "black" and self.board[piece.row + 1][piece.col - 2] == "white"):
+        if in_bounds(piece.row + 1, piece.col - 2) \
+                and (self.board[piece.row + 1][piece.col - 2] == 0 \
+                or piece.color != self.board[piece.row + 1][piece.col - 2]):
             moves.append(self.board[piece.row + 1][piece.col - 2])
 
         # 1 up 2 right
-        if in_bounds(piece.row + 1, piece.col + 2) and \
-                self.board[piece.row + 1][piece.col + 2] == 0 or \
-                (piece.color == "white" and self.board[piece.row + 1][piece.col + 2] == "black") or \
-                (piece.color == "black" and self.board[piece.row + 1][piece.col + 2] == "white"):
+        if in_bounds(piece.row + 1, piece.col + 2) \
+                and (self.board[piece.row + 1][piece.col + 2] == 0 \
+                or piece.color != self.board[piece.row + 1][piece.col + 2]):
             moves.append(self.board[piece.row + 1][piece.col + 2])
 
         # 1 down 2 left
-        if in_bounds(piece.row - 1, piece.col - 2) and \
-                self.board[piece.row - 1][piece.col - 2] == 0 or \
-                (piece.color == "white" and self.board[piece.row - 1][piece.col - 2] == "black") or \
-                (piece.color == "black" and self.board[piece.row - 1][piece.col - 2] == "white"):
+        if in_bounds(piece.row - 1, piece.col - 2) \
+                and (self.board[piece.row - 1][piece.col - 2] == 0 \
+                or piece.color != self.board[piece.row - 1][piece.col - 2]):
             moves.append(self.board[piece.row - 1][piece.col - 2])
 
         # 1 down 2 right
-        if in_bounds(piece.row - 1, piece.col + 2) and \
-                self.board[piece.row - 1][piece.col + 2] == 0 or \
-                (piece.color == "white" and self.board[piece.row - 1][piece.col + 2] == "black") or \
-                (piece.color == "black" and self.board[piece.row - 1][piece.col + 2] == "white"):
+        if in_bounds(piece.row - 1, piece.col + 2) \
+                and (self.board[piece.row - 1][piece.col + 2] == 0 \
+                or piece.color != self.board[piece.row - 1][piece.col + 2]):
             moves.append(self.board[piece.row - 1][piece.col + 2])
+        return moves
+
+    def _bishop_moves(self, piece):
+        # a bishop can move diagonally in 4 directions The space must be free/ occupied by
+        # opposite color
+        # black and white bishops move the same
+
+        moves = []
+
+        # Up/Down left/right as seen on the chess table
+        # moving down to the left / right
+        directions1 = [-1, 1]
+        directions2 = [-1, 1]
+        i = 1
+        for direction1 in directions1:
+            for direction2 in directions2:
+                while in_bounds(piece.row + i * direction1, piece.col + i * direction2) \
+                        and self.board[piece.row + i * direction1][piece.col + i * direction2] == 0:
+                    moves.append((piece.row + i * direction1, piece.col + i * direction2))
+                    if piece.color != self.board[piece.row + i * direction1][piece.col + i * direction2].color:
+                        moves.append((piece.row + i * direction1, piece.col + i * direction2))
+        return moves
+
+    def _queen_moves(self, piece):
+        # a queen can move both like a rook and a bishop
+        moves = self._rook_moves(piece)
+        for move in self._bishop_moves(piece):
+            moves.append(move)
+        return moves
+
+    def _king_moves(self, piece):
+        # can move 1 space in any direction. If a move puts the other king in check it is not valid
+        moves = []
+        if in_bounds(piece.row, piece.col + 1) and not KTK_check(self.board, piece.row, piece.col + 1):
+            moves.append((piece.row, piece.col + 1))
+        if in_bounds(piece.row - 1, piece.col + 1) and not KTK_check(self.board, piece.row - 1, piece.col + 1):
+            moves.append((piece.row - 1, piece.col + 1))
+        if in_bounds(piece.row - 1, piece.col) and not KTK_check(self.board, piece.row - 1, piece.col):
+            moves.append((piece.row - 1, piece.col))
+        if in_bounds(piece.row - 1, piece.col - 1) and not KTK_check(self.board, piece.row - 1, piece.col - 1):
+            moves.append((piece.row - 1, piece.col - 1))
+        if in_bounds(piece.row, piece.col - 1) and not KTK_check(self.board, piece.row, piece.col - 1):
+            moves.append((piece.row, piece.col - 1))
+        if in_bounds(piece.row + 1, piece.col - 1) and not KTK_check(self.board, piece.row + 1, piece.col - 1):
+            moves.append((piece.row + 1, piece.col - 1))
+        if in_bounds(piece.row + 1, piece.col) and not KTK_check(self.board, piece.row + 1, piece.col):
+            moves.append((piece.row + 1, piece.col))
+        if in_bounds(piece.row + 1, piece.col + 1) and not KTK_check(self.board, piece.row + 1, piece.col + 1):
+            moves.append((piece.row + 1, piece.col + 1))
+
         return moves
 
     def set_valid_moves(self, piece):
