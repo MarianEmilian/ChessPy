@@ -18,24 +18,30 @@ def in_bounds(row, col):
         return True
     return False
 
+
 def KTK_check(board, row, col):
     # verifies if a king puts in check another one
-
     # get the other king row col
     for row2 in range(ROWS):
         for col2 in range(COLS):
-            if board[row][col].color != board[row2][col2].color and board[row2][col2].name == "king":
+            if board[row2][col2] != 0:
+                if board[row][col].color != board[row2][col2].color and board[row2][col2].name == "king":
                     break
-    if abs(row2-row) <= 1 and abs(col2, col) <= 1:
+    row_dist = row2 - row
+    col_dist = col2 - col
+    if abs(row_dist) <= 1 and abs(col_dist) <= 1:
         return True
     return False
+
 
 class Board:
     def __init__(self):
         self.board = [[0 for i in range(ROWS)] for j in range(COLS)]
-        self.hardcode_pieces()
+        self._hardcode_pieces()
+        self._first_moves()
 
     def get_piece(self, row, col):
+        print(self.board[row][col])
         return self.board[row][col]
 
     def _draw_pieces(self, window):
@@ -82,11 +88,11 @@ class Board:
             # eat piece diagonally to the left or right
             if in_bounds(piece.row + 1, piece.col + 1) \
                     and self.board[piece.row + 1][piece.col + 1] != 0 \
-                    or self.board[piece.row + 1][piece.col + 1].color == "white":
+                    and self.board[piece.row + 1][piece.col + 1].color == "white":
                 moves.append((piece.row + 1, piece.col + 1))
             if in_bounds(piece.row + 1, piece.col - 1) \
                     and self.board[piece.row + 1][piece.col - 1] != 0 \
-                    or self.board[piece.row + 1][piece.col - 1].color == "white":
+                    and self.board[piece.row + 1][piece.col - 1].color == "white":
                 moves.append((piece.row + 1, piece.col - 1))
             # move downwards if space is free
             if self.board[piece.row + 1][piece.col] == 0:
@@ -96,11 +102,11 @@ class Board:
             # eat piece diagonally to the left or right
             if in_bounds(piece.row - 1, piece.col + 1) \
                     and self.board[piece.row - 1][piece.col + 1] != 0 \
-                    or self.board[piece.row - 1][piece.col + 1].color == "black":
+                    and self.board[piece.row - 1][piece.col + 1].color == "black":
                 moves.append((piece.row - 1, piece.col + 1))
-            if in_bounds(piece.row - 1, piece.col - 1) and \
-                    self.board[piece.row - 1][piece.col - 1] != 0 or \
-                    self.board[piece.row - 1][piece.col - 1].color == "black":
+            if in_bounds(piece.row - 1, piece.col - 1) \
+                    and self.board[piece.row - 1][piece.col - 1] != 0 \
+                    and self.board[piece.row - 1][piece.col - 1].color == "black":
                 moves.append((piece.row - 1, piece.col - 1))
             # move upwards if space is free
             if self.board[piece.row - 1][piece.col] == 0:
@@ -253,7 +259,14 @@ class Board:
         if piece.name == "King":
             piece.valid_moves = self._king_moves(piece)
 
-    def hardcode_pieces(self):
+    def _first_moves(self):
+        for row in range(ROWS):
+            for col in range(COLS):
+                if self.board[row][col] != 0:
+                    print(self.board[row][col].name)
+                    self.update_valid_moves(self.board[row][col])
+
+    def _hardcode_pieces(self):
 
         # pawn placement. 8 pawns for each player
         for col in range(COLS):

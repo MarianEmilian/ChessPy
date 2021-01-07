@@ -1,20 +1,13 @@
 import pygame
-from Utils.Constants import WINDOW_HEIGHT, WINDOW_WIDTH
-from Game.Board import *
+from Utils.Constants import WINDOW_HEIGHT, WINDOW_WIDTH, BOARD_BUFFER, SQUARE_SIZE
 from Utils.Constants import BLACK
+from Game.Game import Game
 
 pygame.display.set_caption('ChessPy')
 
 FPS = 60
 WINDOW = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 WINDOW.fill(BLACK)
-
-
-def init_board(board):
-    board.hardcode_pieces()
-    draw_board(WINDOW)
-    board.draw_pieces(WINDOW)
-    pygame.display.update()
 
 
 def get_rc_from_mouse(pos):
@@ -31,11 +24,10 @@ def get_rc_from_mouse(pos):
     return -1, -1
 
 
-def game():
+def game_main():
     run = True
     clock = pygame.time.Clock()
-    board = Board()
-    init_board(board)
+    game = Game(WINDOW)
     while run:
         clock.tick(FPS)
 
@@ -43,11 +35,13 @@ def game():
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                row, col = get_rc_from_mouse(pygame.mouse.get_pos())
-                piece = board.get_piece(row, col)
+                if event.button == 1:
+                    row, col = get_rc_from_mouse(pygame.mouse.get_pos())
+                    print(game.turn)
+                    game.select(row, col)
 
-
+        game.update()
     pygame.quit()
 
 
-game()
+game_main()
