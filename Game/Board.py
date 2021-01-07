@@ -24,9 +24,9 @@ def KTK_check(board, row, col):
     # get the other king row col
     for row2 in range(ROWS):
         for col2 in range(COLS):
-            if board[row2][col2] != 0:
-                if board[row][col].color != board[row2][col2].color and board[row2][col2].name == "king":
-                    break
+            if board[row][col] != 0 and board[row2][col2] != 0 \
+                    and board[row][col].color != board[row2][col2].color and board[row2][col2].name == "king":
+                break
     row_dist = row2 - row
     col_dist = col2 - col
     if abs(row_dist) <= 1 and abs(col_dist) <= 1:
@@ -38,7 +38,7 @@ class Board:
     def __init__(self):
         self.board = [[0 for i in range(ROWS)] for j in range(COLS)]
         self._hardcode_pieces()
-        self._first_moves()
+        self.update_moves()
 
     def get_piece(self, row, col):
         print(self.board[row][col])
@@ -126,7 +126,8 @@ class Board:
             while in_bounds(piece.row, piece.col + i * direction) \
                     and self.board[piece.row][piece.col + i * direction] == 0:
                 moves.append((piece.row, piece.col + i * direction))
-                if piece.color != self.board[piece.row][piece.col + i * direction].color:
+                if self.board[piece.row][piece.col + i * direction] != 0 \
+                        and piece.color != self.board[piece.row][piece.col + i * direction].color:
                     moves.append((piece.row, piece.col + i * direction))
                 i = i + 1
         i = 1
@@ -135,7 +136,8 @@ class Board:
             while in_bounds(piece.row + i * direction, piece.col) \
                     and self.board[piece.row + i * direction][piece.col] == 0:
                 moves.append((piece.row + i * direction, piece.col))
-                if piece.color != self.board[piece.row + i * direction][piece.col].color:
+                if self.board[piece.row + i * direction][piece.col] != 0 \
+                        and piece.color != self.board[piece.row + i * direction][piece.col].color:
                     moves.append((piece.row + i * direction, piece.col))
                 i = i + 1
         return moves
@@ -210,8 +212,10 @@ class Board:
                 while in_bounds(piece.row + i * direction1, piece.col + i * direction2) \
                         and self.board[piece.row + i * direction1][piece.col + i * direction2] == 0:
                     moves.append((piece.row + i * direction1, piece.col + i * direction2))
-                    if piece.color != self.board[piece.row + i * direction1][piece.col + i * direction2].color:
+                    if self.board[piece.row + i * direction1][piece.col + i * direction2] != 0 \
+                            and piece.color != self.board[piece.row + i * direction1][piece.col + i * direction2].color:
                         moves.append((piece.row + i * direction1, piece.col + i * direction2))
+                    i = i + 1
         return moves
 
     def _queen_moves(self, piece):
@@ -247,33 +251,36 @@ class Board:
         # pawn moves
         if piece.name == "Pawn":
             piece.valid_moves = self._pawn_moves(piece)
-        # knight moves
+        # rook moves
         if piece.name == "Rook":
             piece.valid_moves = self._rook_moves(piece)
+        # knight moves
         if piece.name == "Knight":
             piece.valid_moves = self._knight_moves(piece)
+        # bishop moves
         if piece.name == "Bishop":
             piece.valid_moves = self._bishop_moves(piece)
+        # queen moves
         if piece.name == "Queen":
             piece.valid_moves = self._queen_moves(piece)
+        # king moves
         if piece.name == "King":
             piece.valid_moves = self._king_moves(piece)
 
-    def _first_moves(self):
+    def update_moves(self):
         for row in range(ROWS):
             for col in range(COLS):
                 if self.board[row][col] != 0:
-                    print(self.board[row][col].name)
                     self.update_valid_moves(self.board[row][col])
 
     def _hardcode_pieces(self):
 
         # pawn placement. 8 pawns for each player
         for col in range(COLS):
-            # 2nd row in matrix = 7th row on actual board => black pawns
+            # black pawns
             row = 1
             self.board[row][col] = Piece("Pawn", "black", row, col)
-            # 6th row = 1st row on board
+            # white pawns
             row = row + 5
             self.board[row][col] = Piece("Pawn", "white", row, col)
 
@@ -307,10 +314,12 @@ class Board:
         self.board[7][3] = Piece("King", "white", 7, 3)
 
     def print_board(self):
+        board_str = ""
         for i in range(ROWS):
             for j in range(COLS):
                 if self.board[i][j] != 0:
-                    print(self.board[i][j].name + " ")
+                    board_str = board_str + self.board[i][j].name + " "
                 else:
-                    print("0 ")
-            print("\n")
+                    board_str = board_str + "0 "
+            board_str = board_str + "\n"
+        print(board_str)

@@ -39,7 +39,6 @@ def game_main():
                     row, col = get_rc_from_mouse(pygame.mouse.get_pos())
                     print(game.turn)
                     game.select(row, col)
-
         game.update()
     pygame.quit()
 
