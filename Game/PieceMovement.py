@@ -40,6 +40,10 @@ def pawn_moves(board, piece):
         # move downwards if space is free
         if board[piece.row + 1][piece.col] == 0:
             moves.append((piece.row + 1, piece.col))
+        # move 2 spaces if first move
+        if board[piece.row + 2][piece.col] == 0 and piece.row == 1:
+            moves.append((piece.row + 2, piece.col))
+
     if piece.color == "white":
         # moves upwards
         # eat piece diagonally to the left or right
@@ -54,6 +58,10 @@ def pawn_moves(board, piece):
         # move upwards if space is free
         if board[piece.row - 1][piece.col] == 0:
             moves.append((piece.row - 1, piece.col))
+        # move 2 spaces if first move
+        if board[piece.row - 2][piece.col] == 0 and piece.row == 6:
+            moves.append((piece.row - 2, piece.col))
+
     return moves
 
 
@@ -64,25 +72,31 @@ def rook_moves(board, piece):
     moves = []
     # simulating direction, left right for horizontal movement, up down for vertical
     directions = [-1, 1]
-    i = 1
+
     # moving horizontal
     for direction in directions:
+        i = 1
         while in_bounds(piece.row, piece.col + i * direction) \
-                and board[piece.row][piece.col + i * direction] == 0:
+                and (board[piece.row][piece.col + i * direction] == 0
+                     or (board[piece.row][piece.col + i * direction] != 0
+                         and piece.color != board[piece.row][piece.col + i * direction].color)):
             moves.append((piece.row, piece.col + i * direction))
             if board[piece.row][piece.col + i * direction] != 0 \
                     and piece.color != board[piece.row][piece.col + i * direction].color:
-                moves.append((piece.row, piece.col + i * direction))
+                break
             i = i + 1
-    i = 1
+
     # moving vertically
     for direction in directions:
+        i = 1
         while in_bounds(piece.row + i * direction, piece.col) \
-                and board[piece.row + i * direction][piece.col] == 0:
+                and (board[piece.row + i * direction][piece.col] == 0
+                     or (board[piece.row + i * direction][piece.col] != 0
+                         and piece.color != board[piece.row + i * direction][piece.col].color)):
             moves.append((piece.row + i * direction, piece.col))
             if board[piece.row + i * direction][piece.col] != 0 \
                     and piece.color != board[piece.row + i * direction][piece.col].color:
-                moves.append((piece.row + i * direction, piece.col))
+                break
             i = i + 1
     return moves
 
@@ -94,50 +108,50 @@ def knight_moves(board, piece):
     # 2 up 1 right
     if in_bounds(piece.row + 2, piece.col + 1) \
             and (board[piece.row + 2][piece.col + 1] == 0
-                 or piece.color != board[piece.row + 1][piece.col + 1]):
-        moves.append(board[piece.row + 2][piece.col + 1])
+                 or piece.color != board[piece.row + 2][piece.col + 1].color):
+        moves.append((piece.row + 2, piece.col + 1))
 
     # 2 up 1 left
     if in_bounds(piece.row + 2, piece.col - 1) \
             and (board[piece.row + 2][piece.col - 1] == 0
-                 or piece.color != board[piece.row + 2][piece.col - 1]):
-        moves.append(board[piece.row + 2][piece.col - 1])
+                 or piece.color != board[piece.row + 2][piece.col - 1].color):
+        moves.append((piece.row + 2, piece.col - 1))
 
     # 2 down 1 left
     if in_bounds(piece.row - 2, piece.col - 1) \
             and (board[piece.row - 2][piece.col - 1] == 0
-                 or piece.color != board[piece.row - 2][piece.col - 1]):
-        moves.append(board[piece.row - 2][piece.col - 1])
+                 or piece.color != board[piece.row - 2][piece.col - 1].color):
+        moves.append((piece.row - 2, piece.col - 1))
 
     # 2 down 1 right
     if in_bounds(piece.row - 2, piece.col + 1) \
             and (board[piece.row - 2][piece.col + 1] == 0
-                 or piece.color != board[piece.row - 2][piece.col + 1]):
-        moves.append(board[piece.row - 2][piece.col + 1])
+                 or piece.color != board[piece.row - 2][piece.col + 1].color):
+        moves.append((piece.row - 2, piece.col + 1))
 
     # 1 up 2 left
     if in_bounds(piece.row + 1, piece.col - 2) \
             and (board[piece.row + 1][piece.col - 2] == 0
-                 or piece.color != board[piece.row + 1][piece.col - 2]):
-        moves.append(board[piece.row + 1][piece.col - 2])
+                 or piece.color != board[piece.row + 1][piece.col - 2].color):
+        moves.append((piece.row + 1, piece.col - 2))
 
     # 1 up 2 right
     if in_bounds(piece.row + 1, piece.col + 2) \
             and (board[piece.row + 1][piece.col + 2] == 0
-                 or piece.color != board[piece.row + 1][piece.col + 2]):
-        moves.append(board[piece.row + 1][piece.col + 2])
+                 or piece.color != board[piece.row + 1][piece.col + 2].color):
+        moves.append((piece.row + 1, piece.col + 2))
 
     # 1 down 2 left
     if in_bounds(piece.row - 1, piece.col - 2) \
             and (board[piece.row - 1][piece.col - 2] == 0
-                 or piece.color != board[piece.row - 1][piece.col - 2]):
-        moves.append(board[piece.row - 1][piece.col - 2])
+                 or piece.color != board[piece.row - 1][piece.col - 2].color):
+        moves.append((piece.row - 1, piece.col - 2))
 
     # 1 down 2 right
     if in_bounds(piece.row - 1, piece.col + 2) \
             and (board[piece.row - 1][piece.col + 2] == 0
-                 or piece.color != board[piece.row - 1][piece.col + 2]):
-        moves.append(board[piece.row - 1][piece.col + 2])
+                 or piece.color != board[piece.row - 1][piece.col + 2].color):
+        moves.append((piece.row - 1, piece.col + 2))
     return moves
 
 
@@ -152,15 +166,17 @@ def bishop_moves(board, piece):
     # moving down to the left / right
     directions1 = [-1, 1]
     directions2 = [-1, 1]
-    i = 1
     for direction1 in directions1:
         for direction2 in directions2:
+            i = 1
             while in_bounds(piece.row + i * direction1, piece.col + i * direction2) \
-                    and board[piece.row + i * direction1][piece.col + i * direction2] == 0:
+                    and (board[piece.row + i * direction1][piece.col + i * direction2] == 0
+                         or (board[piece.row + i * direction1][piece.col + i * direction2] != 0
+                             and piece.color != board[piece.row + i * direction1][piece.col + i * direction2].color)):
                 moves.append((piece.row + i * direction1, piece.col + i * direction2))
                 if board[piece.row + i * direction1][piece.col + i * direction2] != 0 \
                         and piece.color != board[piece.row + i * direction1][piece.col + i * direction2].color:
-                    moves.append((piece.row + i * direction1, piece.col + i * direction2))
+                    break
                 i = i + 1
     return moves
 
@@ -176,21 +192,53 @@ def queen_moves(board, piece):
 def king_moves(board, piece):
     # can move 1 space in any direction. If a move puts the other king in check it is not valid
     moves = []
-    if in_bounds(piece.row, piece.col + 1) and not KTK_check(board, piece.row, piece.col + 1):
-        moves.append((piece.row, piece.col + 1))
-    if in_bounds(piece.row - 1, piece.col + 1) and not KTK_check(board, piece.row - 1, piece.col + 1):
-        moves.append((piece.row - 1, piece.col + 1))
-    if in_bounds(piece.row - 1, piece.col) and not KTK_check(board, piece.row - 1, piece.col):
-        moves.append((piece.row - 1, piece.col))
-    if in_bounds(piece.row - 1, piece.col - 1) and not KTK_check(board, piece.row - 1, piece.col - 1):
-        moves.append((piece.row - 1, piece.col - 1))
-    if in_bounds(piece.row, piece.col - 1) and not KTK_check(board, piece.row, piece.col - 1):
-        moves.append((piece.row, piece.col - 1))
-    if in_bounds(piece.row + 1, piece.col - 1) and not KTK_check(board, piece.row + 1, piece.col - 1):
-        moves.append((piece.row + 1, piece.col - 1))
-    if in_bounds(piece.row + 1, piece.col) and not KTK_check(board, piece.row + 1, piece.col):
-        moves.append((piece.row + 1, piece.col))
-    if in_bounds(piece.row + 1, piece.col + 1) and not KTK_check(board, piece.row + 1, piece.col + 1):
-        moves.append((piece.row + 1, piece.col + 1))
+    if in_bounds(piece.row, piece.col + 1) \
+            and not KTK_check(board, piece.row, piece.col + 1):
+        if board[piece.row][piece.col + 1] == 0:
+            moves.append((piece.row, piece.col + 1))
+        elif board[piece.row][piece.col + 1].color != piece.color:
+            moves.append((piece.row, piece.col + 1))
+    if in_bounds(piece.row - 1, piece.col + 1) \
+            and not KTK_check(board, piece.row - 1, piece.col + 1):
+        if board[piece.row - 1][piece.col + 1] == 0:
+            moves.append((piece.row - 1, piece.col + 1))
+        elif board[piece.row - 1][piece.col + 1].color != piece.color:
+            moves.append((piece.row, piece.col + 1))
+    if in_bounds(piece.row - 1, piece.col) \
+            and not KTK_check(board, piece.row - 1, piece.col):
+        if board[piece.row - 1][piece.col] == 0:
+            moves.append((piece.row - 1, piece.col))
+        elif board[piece.row - 1][piece.col].color != piece.color:
+            moves.append((piece.row, piece.col + 1))
+    if in_bounds(piece.row - 1, piece.col - 1) \
+            and not KTK_check(board, piece.row - 1, piece.col - 1):
+        if board[piece.row - 1][piece.col - 1] == 0:
+            moves.append((piece.row - 1, piece.col - 1))
+        elif board[piece.row - 1][piece.col - 1].color != piece.color:
+            moves.append((piece.row - 1, piece.col - 1))
+    if in_bounds(piece.row, piece.col - 1) \
+            and not KTK_check(board, piece.row, piece.col - 1):
+        if board[piece.row][piece.col - 1] == 0:
+            moves.append((piece.row, piece.col - 1))
+        elif board[piece.row][piece.col - 1].color != piece.color:
+            moves.append((piece.row, piece.col - 1))
+    if in_bounds(piece.row + 1, piece.col - 1) \
+            and not KTK_check(board, piece.row + 1, piece.col - 1):
+        if board[piece.row + 1][piece.col - 1] == 0:
+            moves.append((piece.row + 1, piece.col - 1))
+        elif board[piece.row + 1][piece.col - 1].color != piece.color:
+            moves.append((piece.row + 1, piece.col - 1))
+    if in_bounds(piece.row + 1, piece.col) \
+            and not KTK_check(board, piece.row + 1, piece.col):
+        if board[piece.row + 1][piece.col] == 0:
+            moves.append((piece.row + 1, piece.col))
+        elif board[piece.row + 1][piece.col].color != piece.color:
+            moves.append((piece.row + 1, piece.col))
+    if in_bounds(piece.row + 1, piece.col + 1) \
+            and not KTK_check(board, piece.row + 1, piece.col + 1):
+        if board[piece.row + 1][piece.col + 1] == 0:
+            moves.append((piece.row + 1, piece.col + 1))
+        elif board[piece.row + 1][piece.col + 1].color != piece.color:
+            moves.append((piece.row + 1, piece.col + 1))
 
     return moves
