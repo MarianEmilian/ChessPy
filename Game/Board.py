@@ -11,6 +11,7 @@ from Utils.Constants import WHITE, BLUE
 from Utils.Constants import ROWS, COLS
 from Utils.Constants import SQUARE_SIZE, BOARD_BUFFER
 from Game.Piece import Piece
+from Game.PieceMovement import *
 
 
 def in_bounds(row, col):
@@ -250,22 +251,22 @@ class Board:
     def update_valid_moves(self, piece):
         # pawn moves
         if piece.name == "Pawn":
-            piece.valid_moves = self._pawn_moves(piece)
+            piece.valid_moves = pawn_moves(self.board, piece)
         # rook moves
         if piece.name == "Rook":
-            piece.valid_moves = self._rook_moves(piece)
+            piece.valid_moves = rook_moves(self.board, piece)
         # knight moves
         if piece.name == "Knight":
-            piece.valid_moves = self._knight_moves(piece)
+            piece.valid_moves = knight_moves(self.board, piece)
         # bishop moves
         if piece.name == "Bishop":
-            piece.valid_moves = self._bishop_moves(piece)
+            piece.valid_moves = bishop_moves(self.board, piece)
         # queen moves
         if piece.name == "Queen":
-            piece.valid_moves = self._queen_moves(piece)
+            piece.valid_moves = queen_moves(self.board, piece)
         # king moves
         if piece.name == "King":
-            piece.valid_moves = self._king_moves(piece)
+            piece.valid_moves = king_moves(self.board, piece)
 
     def update_moves(self):
         for row in range(ROWS):

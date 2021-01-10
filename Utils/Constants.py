@@ -3,7 +3,7 @@ from pygame import Color
 WHITE = Color(255, 255, 255)
 BLUE = Color(78, 145, 232)     # a sort of light blue #4e91e8
 BLACK = Color(0, 0, 0)
-GREEN = Color(0, 255, 0)
+GREEN = Color(100, 33, 33)
 ROWS = 8
 COLS = 8
 SQUARE_SIZE = 90
