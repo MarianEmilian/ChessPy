@@ -15,7 +15,7 @@ def KTK_check(board, row, col):
     for row2 in range(ROWS):
         for col2 in range(COLS):
             if board[row][col] != 0 and board[row2][col2] != 0 \
-                    and board[row][col].color != board[row2][col2].color and board[row2][col2].name == "king":
+                    and board[row][col].color != board[row2][col2].color and board[row2][col2].name == "King":
                 break
     row_dist = row2 - row
     col_dist = col2 - col

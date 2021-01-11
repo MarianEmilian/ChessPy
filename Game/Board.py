@@ -119,9 +119,9 @@ class Board:
         self.board[7][2] = Piece("Bishop", "white", 7, 2)
         self.board[7][5] = Piece("Bishop", "white", 7, 5)
         # white queen placement
-        self.board[7][4] = Piece("Queen", "white", 7, 4)
+        self.board[7][3] = Piece("Queen", "white", 7, 3)
         # white king placement
-        self.board[7][3] = Piece("King", "white", 7, 3)
+        self.board[7][4] = Piece("King", "white", 7, 4)
 
     def print_board(self):
         board_str = ""
