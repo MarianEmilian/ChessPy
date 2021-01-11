@@ -7,6 +7,9 @@ Each space can either contain a piece at a time, or be empty.
 import pygame
 # used colors
 from Utils.Constants import WHITE, BLUE
+# board dimensions
+from Utils.Constants import SQUARE_SIZE, BOARD_BUFFER
+from Game.Piece import Piece
 from Game.PieceMovement import *
 
 
