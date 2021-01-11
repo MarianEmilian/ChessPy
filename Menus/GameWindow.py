@@ -2,6 +2,8 @@ import pygame
 from Utils.Constants import WINDOW_HEIGHT, WINDOW_WIDTH, BOARD_BUFFER, SQUARE_SIZE
 from Utils.Constants import BLACK
 from Game.Game import Game
+from random import choice
+from Game.PieceMovement import get_blacks
 
 pygame.display.set_caption('ChessPy')
 
@@ -36,9 +38,20 @@ def game_main():
                 run = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    row, col = get_rc_from_mouse(pygame.mouse.get_pos())
-                    print(game.turn)
-                    game.select(row, col)
+                    # player action
+                    if game.turn == "white":
+                        row, col = get_rc_from_mouse(pygame.mouse.get_pos())
+                        game.select(row, col)
+                    if game.turn == "black":
+                        piece = choice(get_blacks(game.board.board))
+                        moves = piece.get_valid_moves()
+                        while not moves:
+                            piece = choice(get_blacks(game.board.board))
+                            moves = piece.get_valid_moves()
+                        game.selected_piece = piece
+                        move = choice(moves)
+                        row, col = move[0], move[1]
+                        game.select(row, col)
         game.update()
     pygame.quit()
 

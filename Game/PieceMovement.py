@@ -1,6 +1,13 @@
 from Utils.Constants import ROWS, COLS
-from Utils.Constants import SQUARE_SIZE, BOARD_BUFFER
-from Game.Piece import Piece
+
+
+def get_blacks(board):
+    pieces = []
+    for row in range(ROWS):
+        for col in range(COLS):
+            if board[row][col] != 0 and board[row][col].color == "black":
+                pieces.append(board[row][col])
+    return pieces
 
 
 def in_bounds(row, col):
@@ -12,13 +19,18 @@ def in_bounds(row, col):
 def KTK_check(board, row, col):
     # verifies if a king puts in check another one
     # get the other king row col
+    found = False
+    aux_r = 0
+    aux_c = 0
     for row2 in range(ROWS):
         for col2 in range(COLS):
-            if board[row][col] != 0 and board[row2][col2] != 0 \
+            if not found and board[row][col] != 0 and board[row2][col2] != 0 \
                     and board[row][col].color != board[row2][col2].color and board[row2][col2].name == "King":
-                break
-    row_dist = row2 - row
-    col_dist = col2 - col
+                aux_r = row2
+                aux_c = col2
+                found = True
+    row_dist = aux_r - row
+    col_dist = aux_c - col
     if abs(row_dist) <= 1 and abs(col_dist) <= 1:
         return True
     return False
