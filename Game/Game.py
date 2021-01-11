@@ -50,18 +50,21 @@ class Game:
                 else:
                     # try to move
                     move = self._move(row, col)
-            print(move)
+
             if not move:
                 # reselect the piece
-                self.selected_piece = None
+                self.deselect()
                 self.select(row, col)
         else:
             piece = self.board.get_piece(row, col)
             if piece != 0 and piece.color == self.turn:
                 self.selected_piece = piece
-                print("Urmatoarele mutari sunt pos: ")
-                highlight_valid_moves(self.window, piece.get_valid_moves())
-                print(piece.valid_moves)
+                if self.selected_piece.get_valid_moves():
+                    print("Urmatoarele mutari sunt pos: ")
+                    highlight_valid_moves(self.window, piece.get_valid_moves())
+                    print(piece.valid_moves)
+                else:
+                    self.deselect()
                 return True
         return False
 
@@ -71,7 +74,7 @@ class Game:
             if not self.selected_piece.get_valid_moves():
                 print("There are no valid moves")
                 self.deselect()
-            if (row, col) in self.selected_piece.valid_moves:
+            if (row, col) in self.selected_piece.get_valid_moves():
                 if self.board.board[row][col] != 0:
                     self.board.board[row][col] = 0
                 # update king positions
@@ -94,3 +97,4 @@ class Game:
             self.turn = "black"
         else:
             self.turn = "white"
+

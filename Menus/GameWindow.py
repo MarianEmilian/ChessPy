@@ -30,6 +30,8 @@ def game_main():
     run = True
     clock = pygame.time.Clock()
     game = Game(WINDOW)
+    p_vs = input("Choose who to play with. Player/AI: ")
+
     while run:
         clock.tick(FPS)
 
@@ -42,7 +44,7 @@ def game_main():
                     if game.turn == "white":
                         row, col = get_rc_from_mouse(pygame.mouse.get_pos())
                         game.select(row, col)
-                    if game.turn == "black":
+                    if p_vs == "AI" and game.turn == "black":
                         piece = choice(get_blacks(game.board.board))
                         moves = piece.get_valid_moves()
                         while not moves:
@@ -51,6 +53,9 @@ def game_main():
                         game.selected_piece = piece
                         move = choice(moves)
                         row, col = move[0], move[1]
+                        game.select(row, col)
+                    elif p_vs == "Player" and game.turn == "black":
+                        row, col = get_rc_from_mouse(pygame.mouse.get_pos())
                         game.select(row, col)
         game.update()
     pygame.quit()

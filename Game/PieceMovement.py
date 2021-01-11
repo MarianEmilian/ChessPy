@@ -1,6 +1,17 @@
 from Utils.Constants import ROWS, COLS
 
 
+def get_kings_pos(board):
+    for row in range(ROWS):
+        for col in range(COLS):
+            if board[row][col] != 0 and board[row][col].name == "King":
+                if board[row][col].color == "white":
+                    w_king = (row, col)
+                else:
+                    b_king = (row, col)
+    return w_king, b_king
+
+
 def get_blacks(board):
     pieces = []
     for row in range(ROWS):
@@ -11,12 +22,12 @@ def get_blacks(board):
 
 
 def in_bounds(row, col):
-    if row in range(ROWS) and col in range(COLS):
+    if row in range(0, 7) and col in range(0, 7):
         return True
     return False
 
 
-def KTK_check(board, row, col):
+def KTK_check(board, color, row, col):
     # verifies if a king puts in check another one
     # get the other king row col
     found = False
@@ -24,11 +35,11 @@ def KTK_check(board, row, col):
     aux_c = 0
     for row2 in range(ROWS):
         for col2 in range(COLS):
-            if not found and board[row][col] != 0 and board[row2][col2] != 0 \
-                    and board[row][col].color != board[row2][col2].color and board[row2][col2].name == "King":
-                aux_r = row2
-                aux_c = col2
-                found = True
+            if not found and board[row2][col2] != 0:
+                if board[row2][col2].name == "King" and color != board[row2][col2].color:
+                    aux_r = row2
+                    aux_c = col2
+                    found = True
     row_dist = aux_r - row
     col_dist = aux_c - col
     if abs(row_dist) <= 1 and abs(col_dist) <= 1:
@@ -50,11 +61,12 @@ def pawn_moves(board, piece):
                 and board[piece.row + 1][piece.col - 1].color == "white":
             moves.append((piece.row + 1, piece.col - 1))
         # move downwards if space is free
-        if board[piece.row + 1][piece.col] == 0:
+        if in_bounds(piece.row + 1, piece.col) \
+                and board[piece.row + 1][piece.col] == 0:
             moves.append((piece.row + 1, piece.col))
-        # move 2 spaces if first move
-        if board[piece.row + 2][piece.col] == 0 and piece.row == 1:
-            moves.append((piece.row + 2, piece.col))
+            # move 2 spaces if first move
+            if piece.row == 1 and board[piece.row + 2][piece.col] == 0:
+                moves.append((piece.row + 2, piece.col))
 
     if piece.color == "white":
         # moves upwards
@@ -68,11 +80,12 @@ def pawn_moves(board, piece):
                 and board[piece.row - 1][piece.col - 1].color == "black":
             moves.append((piece.row - 1, piece.col - 1))
         # move upwards if space is free
-        if board[piece.row - 1][piece.col] == 0:
+        if in_bounds(piece.row - 1, piece.col) \
+                and board[piece.row - 1][piece.col] == 0:
             moves.append((piece.row - 1, piece.col))
-        # move 2 spaces if first move
-        if board[piece.row - 2][piece.col] == 0 and piece.row == 6:
-            moves.append((piece.row - 2, piece.col))
+            # move 2 spaces if first move
+            if piece.row == 6 and board[piece.row - 2][piece.col] == 0:
+                moves.append((piece.row - 2, piece.col))
 
     return moves
 
@@ -205,52 +218,60 @@ def king_moves(board, piece):
     # can move 1 space in any direction. If a move puts the other king in check it is not valid
     moves = []
     if in_bounds(piece.row, piece.col + 1) \
-            and not KTK_check(board, piece.row, piece.col + 1):
-        if board[piece.row][piece.col + 1] == 0:
+            and not KTK_check(board, piece.color, piece.row, piece.col + 1):
+        if board[piece.row][piece.col + 1] == 0 \
+                or (board[piece.row][piece.col + 1] != 0
+                    and board[piece.row][piece.col + 1].color != piece.color):
             moves.append((piece.row, piece.col + 1))
-        elif board[piece.row][piece.col + 1].color != piece.color:
-            moves.append((piece.row, piece.col + 1))
+            print(piece.color + "1")
     if in_bounds(piece.row - 1, piece.col + 1) \
-            and not KTK_check(board, piece.row - 1, piece.col + 1):
-        if board[piece.row - 1][piece.col + 1] == 0:
+            and not KTK_check(board, piece.color, piece.row - 1, piece.col + 1):
+        if board[piece.row - 1][piece.col + 1] == 0 \
+                or (board[piece.row - 1][piece.col + 1] != 0
+                    and board[piece.row - 1][piece.col + 1].color != piece.color):
             moves.append((piece.row - 1, piece.col + 1))
-        elif board[piece.row - 1][piece.col + 1].color != piece.color:
-            moves.append((piece.row, piece.col + 1))
+            print(piece.color + "2")
     if in_bounds(piece.row - 1, piece.col) \
-            and not KTK_check(board, piece.row - 1, piece.col):
-        if board[piece.row - 1][piece.col] == 0:
+            and not KTK_check(board, piece.color, piece.row - 1, piece.col):
+        if board[piece.row - 1][piece.col] == 0 \
+                or (board[piece.row - 1][piece.col] != 0
+                    and board[piece.row - 1][piece.col].color != piece.color):
             moves.append((piece.row - 1, piece.col))
-        elif board[piece.row - 1][piece.col].color != piece.color:
-            moves.append((piece.row, piece.col + 1))
+            print(piece.color + "3")
     if in_bounds(piece.row - 1, piece.col - 1) \
-            and not KTK_check(board, piece.row - 1, piece.col - 1):
-        if board[piece.row - 1][piece.col - 1] == 0:
+            and not KTK_check(board, piece.color, piece.row - 1, piece.col - 1):
+        if board[piece.row - 1][piece.col - 1] == 0 \
+                or (board[piece.row - 1][piece.col - 1] != 0
+                    and board[piece.row - 1][piece.col - 1].color != piece.color):
             moves.append((piece.row - 1, piece.col - 1))
-        elif board[piece.row - 1][piece.col - 1].color != piece.color:
-            moves.append((piece.row - 1, piece.col - 1))
+            print(piece.color + "4")
     if in_bounds(piece.row, piece.col - 1) \
-            and not KTK_check(board, piece.row, piece.col - 1):
-        if board[piece.row][piece.col - 1] == 0:
+            and not KTK_check(board, piece.color, piece.row, piece.col - 1):
+        if board[piece.row][piece.col - 1] == 0 \
+                or (board[piece.row][piece.col - 1] != 0
+                    and board[piece.row][piece.col - 1].color != piece.color):
             moves.append((piece.row, piece.col - 1))
-        elif board[piece.row][piece.col - 1].color != piece.color:
-            moves.append((piece.row, piece.col - 1))
+            print(piece.color + "5")
     if in_bounds(piece.row + 1, piece.col - 1) \
-            and not KTK_check(board, piece.row + 1, piece.col - 1):
-        if board[piece.row + 1][piece.col - 1] == 0:
+            and not KTK_check(board, piece.color, piece.row + 1, piece.col - 1):
+        if board[piece.row + 1][piece.col - 1] == 0 \
+                or (board[piece.row + 1][piece.col - 1] != 0
+                    and board[piece.row + 1][piece.col - 1].color != piece.color):
             moves.append((piece.row + 1, piece.col - 1))
-        elif board[piece.row + 1][piece.col - 1].color != piece.color:
-            moves.append((piece.row + 1, piece.col - 1))
+            print(piece.color + "6")
     if in_bounds(piece.row + 1, piece.col) \
-            and not KTK_check(board, piece.row + 1, piece.col):
-        if board[piece.row + 1][piece.col] == 0:
+            and not KTK_check(board, piece.color, piece.row + 1, piece.col):
+        if board[piece.row + 1][piece.col] == 0 \
+                or (board[piece.row + 1][piece.col] != 0
+                    and board[piece.row + 1][piece.col].color != piece.color):
             moves.append((piece.row + 1, piece.col))
-        elif board[piece.row + 1][piece.col].color != piece.color:
-            moves.append((piece.row + 1, piece.col))
+            print(piece.color + "7")
     if in_bounds(piece.row + 1, piece.col + 1) \
-            and not KTK_check(board, piece.row + 1, piece.col + 1):
-        if board[piece.row + 1][piece.col + 1] == 0:
+            and not KTK_check(board, piece.color, piece.row + 1, piece.col + 1):
+        if board[piece.row + 1][piece.col + 1] == 0 \
+                or (board[piece.row + 1][piece.col + 1] != 0
+                    and board[piece.row + 1][piece.col + 1].color != piece.color):
             moves.append((piece.row + 1, piece.col + 1))
-        elif board[piece.row + 1][piece.col + 1].color != piece.color:
-            moves.append((piece.row + 1, piece.col + 1))
+            print(piece.color + "8")
 
     return moves
