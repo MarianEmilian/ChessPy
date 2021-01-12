@@ -1,3 +1,8 @@
+"""
+This module takes care of the player interaction with the board,
+ai, or the other player. In other words the game class simulates a game.
+"""
+
 import pygame
 
 from Game.Board import Board

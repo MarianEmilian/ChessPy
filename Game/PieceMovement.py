@@ -1,3 +1,8 @@
+"""
+Module implementing piece movement related functions
+"""
+
+
 from Utils.Constants import ROWS, COLS
 
 

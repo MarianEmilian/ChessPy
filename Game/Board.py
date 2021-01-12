@@ -1,5 +1,5 @@
 """
-A board is composed from 64 spaces, conventionally alternating black and white. For visual purposes i replaced black with
+A board is a 8x8 matrix, conventionally alternating black and white. For visual purposes i replaced black with
 light blue.
 Each space can either contain a piece at a time, or be empty.
 """

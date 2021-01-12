@@ -1,3 +1,7 @@
+"""
+Creates the game GUI which the player/players interact with.
+"""
+
 import pygame
 from Utils.Constants import WINDOW_HEIGHT, WINDOW_WIDTH, BOARD_BUFFER, SQUARE_SIZE
 from Utils.Constants import BLACK
