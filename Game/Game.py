@@ -8,7 +8,7 @@ import pygame
 from Game.Board import Board
 from Utils.Draw import highlight_square
 from Game.Piece import Piece
-from Game.PieceMovement import is_in_check
+from Game.PieceMovement import is_in_check, can_change
 
 
 def highlight_valid_moves(window, valid_moves):
@@ -87,6 +87,9 @@ class Game:
                     else:
                         self.b_king = (row, col)
                 self.board.move(self.selected_piece, row, col)
+                if can_change(self.selected_piece):
+                    new_piece = input("You can make this pawn a Knight, Bishop, Rook or Queen: ")
+                    self.selected_piece.pawn_to_other(new_piece)
                 self.board.update_moves()
                 self.deselect()
                 self.change_turn()

@@ -2,7 +2,6 @@
 Module implementing piece movement related functions
 """
 
-
 from Utils.Constants import ROWS, COLS
 
 
@@ -302,5 +301,15 @@ def king_moves(board, piece):
                 or (board[piece.row + 1][piece.col + 1] != 0
                     and board[piece.row + 1][piece.col + 1].color != piece.color):
             moves.append((piece.row + 1, piece.col + 1))
-
     return moves
+
+
+def can_change(piece):
+    if piece.name == "Pawn":
+        if piece.color == "white":
+            if piece.row == 0:
+                return True
+        else:
+            if piece.row == 7:
+                return True
+    return False
