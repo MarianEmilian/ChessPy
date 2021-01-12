@@ -13,6 +13,7 @@ WINDOW.fill(BLACK)
 
 
 def get_rc_from_mouse(pos):
+    """Returns board coordinates from mouse position"""
     x, y = pos
     # compensate for padding
     x = x - BOARD_BUFFER
@@ -27,6 +28,7 @@ def get_rc_from_mouse(pos):
 
 
 def game_main():
+    """Runs game"""
     clock = pygame.time.Clock()
     game = Game(WINDOW)
     p_vs = input("Choose who to play with. Player/AI: ")
@@ -43,6 +45,7 @@ def game_main():
                         row, col = get_rc_from_mouse(pygame.mouse.get_pos())
                         game.select(row, col)
                     if p_vs == "AI" and game.turn == "black":
+                        # AI random moves
                         piece = choice(get_blacks(game.board.board))
                         moves = piece.get_valid_moves()
                         while not moves:

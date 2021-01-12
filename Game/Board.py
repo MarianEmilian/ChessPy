@@ -20,10 +20,11 @@ class Board:
         self.update_moves()
 
     def get_piece(self, row, col):
-        print(self.board[row][col])
+        """Returns the piece at the row and col on the board"""
         return self.board[row][col]
 
     def _draw_pieces(self, window):
+        """Draws the pieces of the board"""
         for row in range(ROWS):
             for col in range(COLS):
                 if self.board[row][col] != 0:
@@ -31,10 +32,12 @@ class Board:
                     self.board[row][col].draw(window)
 
     def move(self, piece, row, col):
+        """Moves the piece at the new coordinates"""
         self.board[piece.row][piece.col], self.board[row][col] = self.board[row][col], self.board[piece.row][piece.col]
         piece.update_piece(row, col)
 
     def draw(self, window):
+        """Draws the board surface + pieces"""
         # drawing the chess board pattern
         for row in range(ROWS):
             start = row % 2
@@ -60,6 +63,7 @@ class Board:
         self._draw_pieces(window)
 
     def update_valid_moves(self, piece):
+        """Updates valid moves of a given piece"""
         # pawn moves
         if piece.name == "Pawn":
             piece.valid_moves = pawn_moves(self.board, piece)
@@ -80,13 +84,14 @@ class Board:
             piece.valid_moves = king_moves(self.board, piece)
 
     def update_moves(self):
+        """Updates moves of every piece on the board"""
         for row in range(ROWS):
             for col in range(COLS):
                 if self.board[row][col] != 0:
                     self.update_valid_moves(self.board[row][col])
 
     def _hardcode_pieces(self):
-
+        """Hardcode pieces on the board"""
         # pawn placement. 8 pawns for each player
         for col in range(COLS):
             # black pawns
@@ -126,6 +131,7 @@ class Board:
         self.board[7][4] = Piece("King", "white", 7, 4)
 
     def print_board(self):
+        """Prints board in matrix format"""
         board_str = ""
         for i in range(ROWS):
             for j in range(COLS):

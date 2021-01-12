@@ -29,21 +29,25 @@ class Piece:
         self.calc_coord()
 
     def pawn_to_other(self, name: str):
+        """Changes pawn to any other piece (not pawn or king)"""
         # Updates pawn
         self.name = name
         self.img_path = IMG_PATH + self.color[0] + name + ".png"
 
     def calc_coord(self):
+        """Calculates the coordinates of a piece for the window"""
         self.x = SQUARE_SIZE * self.col + SQUARE_SIZE // 2 + BOARD_BUFFER // 2
         self.y = SQUARE_SIZE * self.row + SQUARE_SIZE // 2 + BOARD_BUFFER // 2
 
     def draw(self, window):
+        """Draws a piece at its coordinates"""
         piece_img = load(self.img_path)
         # downsizing img. Rotate by 0 deg, multiply by 0,5
         piece_img = scale(piece_img, (92, 92))
         window.blit(piece_img, (self.x, self.y))
 
     def update_piece(self, row, col):
+        """Updates piece place on board"""
         # update row and col
         self.row = row
         self.col = col
@@ -51,4 +55,5 @@ class Piece:
         self.calc_coord()
 
     def get_valid_moves(self):
+        """Returns the valid moves of a piece"""
         return self.valid_moves

@@ -7,6 +7,7 @@ from Game.PieceMovement import is_in_check
 
 
 def highlight_valid_moves(window, valid_moves):
+    """Highlights valid moves of a selected piece"""
     for move in valid_moves:
         highlight_square(window, move[0], move[1])
     pygame.display.update()
@@ -15,12 +16,15 @@ def highlight_valid_moves(window, valid_moves):
 class Game:
     def __init__(self, window):
         self.selected_piece: Piece = None
-        self._init()
+        self.board = Board()
+        self.b_king = (0, 4)
+        self.w_king = (7, 4)
         self.window = window
         self.turn = "white"  # white player always starts
         self.run = True
 
     def update(self):
+        """Updates the game GUI"""
         self.board.draw(self.window)
         if self.selected_piece is not None:
             highlight_valid_moves(self.window, self.selected_piece.get_valid_moves())
@@ -28,18 +32,13 @@ class Game:
         if self.check_win():
             self.run = False
 
-    def _init(self):
-        self.board = Board()
-        self.b_king = (0, 4)
-        self.w_king = (7, 4)
-
-    def reset(self):
-        self._init()
 
     def deselect(self):
+        """Deselects a piece"""
         self.selected_piece = None
 
     def select(self, row, col):
+        """Selects a piece if none is selected, moves a selected piece"""
         if self.selected_piece:
             if self.selected_piece.color == "white":
                 if row == self.b_king[0] and col == self.b_king[1]:
@@ -69,6 +68,7 @@ class Game:
         return False
 
     def _move(self, row, col):
+        """Moves a selected piece if possible"""
         if self.selected_piece is not None:
             if not self.selected_piece.get_valid_moves():
                 self.deselect()
@@ -90,12 +90,14 @@ class Game:
         return True
 
     def change_turn(self):
+        """Changes turn"""
         if self.turn == "white":
             self.turn = "black"
         else:
             self.turn = "white"
 
     def check_win(self):
+        """Checks the win condition"""
         white_king = self.board.get_piece(self.w_king[0], self.w_king[1])
         black_king = self.board.get_piece(self.b_king[0], self.b_king[1])
         w_in_check = is_in_check(self.board.board, white_king.color, white_king.row, white_king.col)
