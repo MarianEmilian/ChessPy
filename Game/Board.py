@@ -32,7 +32,6 @@ class Board:
 
     def move(self, piece, row, col):
         self.board[piece.row][piece.col], self.board[row][col] = self.board[row][col], self.board[piece.row][piece.col]
-        print(self.board[piece.row][piece.col], self.board[row][col])
         piece.update_piece(row, col)
 
     def draw(self, window):
