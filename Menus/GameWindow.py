@@ -27,17 +27,15 @@ def get_rc_from_mouse(pos):
 
 
 def game_main():
-    run = True
     clock = pygame.time.Clock()
     game = Game(WINDOW)
     p_vs = input("Choose who to play with. Player/AI: ")
 
-    while run:
+    while game.run:
         clock.tick(FPS)
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False
+                game.run = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     # player action
